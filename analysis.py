@@ -51,7 +51,7 @@ def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
         plt.savefig(export_path)
 
 if __name__ == '__main__':
-    ts = read_dataset('datasets/internet-traffic-data-2005-06-2005-07.csv')
+    ts = read_dataset('datasets/internet-traffic-data-5minutes.csv')
     plot_full_timeseries(ts)
     plot_interval_of_timeseries(ts, '2005-06-22', '2005-06-22')
     plot_interval_of_timeseries(ts, '2005-07-04', '2005-07-10')
