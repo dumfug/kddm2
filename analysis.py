@@ -31,6 +31,27 @@ def plot_full_timeseries(ts, export_path=None):
     else:
         plt.savefig(export_path)
 
+def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
+    ts_interval = ts[start_day + ' 00:00:00' : end_day + ' 23:59:59']
+    ts_interval = ts_interval / 8 / 2**30 # convert bits into GB
+
+    plt.plot(ts_interval)
+    plt.ylabel('data [GB]')
+    plt.xlabel('time')
+    if start_day == end_day:
+        plt.title('Internet Traffic Data collected on ' + start_day)
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    else:
+        plt.title('Data collected between ' + start_day + ' and ' + end_day)
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%a'))
+
+    if export_path is None:
+        plt.show()
+    else:
+        plt.savefig(export_path)
+
 if __name__ == '__main__':
     ts = read_dataset('datasets/internet-traffic-data-2005-06-2005-07.csv')
     plot_full_timeseries(ts)
+    plot_interval_of_timeseries(ts, '2005-06-22', '2005-06-22')
+    plot_interval_of_timeseries(ts, '2005-07-04', '2005-07-10')
