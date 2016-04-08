@@ -1,4 +1,4 @@
-"Time","Internet traffic data (in bits) from a private ISP with centres in 11 European cities. The data corresponds to a transatlantic link and was collected from 06:57 hours on 7 June to 11:17 hours on 31 July 2005. Hourly data."
+"Time","Internet traffic data (in bits)"
 "2005-06-07 07:00:00",56718587433
 "2005-06-07 08:00:00",76456162968
 "2005-06-07 09:00:00",82534038485
@@ -1230,6 +1230,3 @@
 "2005-07-28 11:00:00",69610584123
 "2005-07-28 12:00:00",76364975533
 "2005-07-28 13:00:00",81281257078
-
-Internet traffic data (in bits) from a private ISP with centres in 11 European cities. The data corresponds to a transatlantic link and was collected from 06:57 hours on 7 June to 11:17 hours on 31 July 2005. Hourly data.
-
