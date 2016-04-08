@@ -9,8 +9,7 @@ import matplotlib.dates as mdates
 
 def read_dataset(path, date_parser=None):
     data = pd.read_csv(path, parse_dates='Time', index_col='Time')
-    ts = data['Internet traffic data (in bits)']
-    return ts
+    return data
 
 def plot_full_timeseries(ts, export_path=None):
     ts_scaled = ts / 8 / 2**30 # convert bits into GB
@@ -50,6 +49,22 @@ def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
     else:
         plt.savefig(export_path)
 
+def plot_autocorrelation(ts, max_lag):
+    pd.tools.plotting.autocorrelation_plot(ts)
+    plt.gca().set_xlim([0, max_lag])
+    plt.show()
+
+def plot_daily_means(ts):
+    ext_ts = ts / 8 / 2**30
+    ext_ts['weekday'] = ext_ts.index.weekday
+    ext_ts.boxplot(column=['Internet traffic data (in bits)'], by='weekday')
+
+    plt.title('')
+    plt.ylabel('data [GB]')
+    plt.xlabel('time')
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%a'))
+    plt.show()
+
 if __name__ == '__main__':
     ts_5minutes = read_dataset('datasets/internet-traffic-data-5minutes.csv')
     plot_full_timeseries(ts_5minutes)
@@ -61,3 +76,5 @@ if __name__ == '__main__':
 
     ts_daily = read_dataset('datasets/internet-traffic-data-daily.csv')
     plot_full_timeseries(ts_daily)
+
+    plot_daily_means(ts_5minutes)
