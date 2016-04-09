@@ -9,11 +9,13 @@ import matplotlib.dates as mdates
 
 def read_dataset(path, date_parser=None):
     data = pd.read_csv(path, parse_dates='Time', index_col='Time')
+    data = data / 8 / 2**30 # convert bits into GB
+    data.rename(columns={'Internet traffic data (in bits)':
+      'Internet traffic data (in GB)'}, inplace=True)
     return data
 
 def plot_full_timeseries(ts, export_path=None):
-    ts_scaled = ts / 8 / 2**30 # convert bits into GB
-    plt.plot(ts_scaled)
+    plt.plot(ts)
 
     plt.title('Internet Traffic Data collected at Transatlantic Link')
     plt.ylabel('data [GB]')
@@ -31,12 +33,9 @@ def plot_full_timeseries(ts, export_path=None):
         plt.savefig(export_path)
 
 def plot_all_full_timeseries(ts_5min, ts_hourly, ts_daily, export_path=None):
-    ts_scaled = ts_5min / 8 / 2**30 # convert bits into GB
-    plt.plot(ts_scaled, label='5 minutes')
-    ts_scaled = ts_hourly / 8 / 2**30 # convert bits into GB
-    plt.plot(ts_scaled, label='hourly')
-    ts_scaled = ts_daily / 8 / 2**30 # convert bits into GB
-    plt.plot(ts_scaled, label='daily')
+    plt.plot(ts_5min, label='5 minutes')
+    plt.plot(ts_hourly, label='hourly')
+    plt.plot(ts_daily, label='daily')
 
     plt.legend(loc=4, fontsize='medium')
     plt.title('Internet Traffic Data collected at Transatlantic Link')
@@ -57,9 +56,8 @@ def plot_all_full_timeseries(ts_5min, ts_hourly, ts_daily, export_path=None):
 
 def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
     ts_interval = ts[start_day + ' 00:00:00' : end_day + ' 23:59:59']
-    ts_interval = ts_interval / 8 / 2**30 # convert bits into GB
-
     plt.plot(ts_interval)
+
     plt.ylabel('data [GB]')
     plt.xlabel('time')
     if start_day == end_day:
@@ -80,9 +78,9 @@ def plot_autocorrelation(ts, max_lag):
     plt.show()
 
 def plot_daily_means(ts):
-    ext_ts = ts / 8 / 2**30
+    ext_ts = ts.copy()
     ext_ts['weekday'] = ext_ts.index.weekday
-    ext_ts.boxplot(column=['Internet traffic data (in bits)'], by='weekday')
+    ext_ts.boxplot(column=['Internet traffic data (in GB)'], by='weekday')
 
     plt.title('')
     plt.ylabel('data [GB]')
