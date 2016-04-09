@@ -72,9 +72,11 @@ def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
     else:
         plt.savefig(export_path)
 
-def plot_autocorrelation(ts, max_lag):
+def plot_acf(ts, max_lag):
     pd.tools.plotting.autocorrelation_plot(ts)
+    plt.title('ACF hourly data (one week)')
     plt.gca().set_xlim([0, max_lag])
+    plt.xticks(np.arange(0, max_lag+1, 24))
     plt.show()
 
 def plot_daily_means(ts):
@@ -103,3 +105,4 @@ if __name__ == '__main__':
     plot_interval_of_timeseries(ts_5minutes, '2005-07-04', '2005-07-10')
 
     plot_daily_means(ts_5minutes)
+    plot_acf(ts_hourly, 200)
