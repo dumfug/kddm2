@@ -5,17 +5,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pylab as plt
 import matplotlib.dates as mdates
+from utils import read_dataset
 
 
-def read_dataset(path, date_parser=None):
-    data = pd.read_csv(path, parse_dates='Time', index_col='Time')
-    data = data / 8 / 2**30 # convert bits into GB
-    data.rename(columns={'Internet traffic data (in bits)':
-      'Internet traffic data (in GB)'}, inplace=True)
-    return data
-
-def plot_full_timeseries(ts, export_path=None):
-    plt.plot(ts)
+def plot_full_timeseries(time_series, export_path=None):
+    plt.plot(time_series)
 
     plt.title('Internet Traffic Data collected at Transatlantic Link')
     plt.ylabel('data [GB]')
@@ -54,8 +48,8 @@ def plot_all_full_timeseries(ts_5min, ts_hourly, ts_daily, export_path=None):
     else:
         plt.savefig(export_path)
 
-def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
-    ts_interval = ts[start_day + ' 00:00:00' : end_day + ' 23:59:59']
+def plot_interval_of_timeseries(time_series, start_day, end_day, export_path=None):
+    ts_interval = time_series[start_day + ' 00:00:00' : end_day + ' 23:59:59']
     plt.plot(ts_interval)
 
     plt.ylabel('data [GB]')
@@ -72,15 +66,15 @@ def plot_interval_of_timeseries(ts, start_day, end_day, export_path=None):
     else:
         plt.savefig(export_path)
 
-def plot_acf(ts, max_lag, ticks, plot_title=''):
-    pd.tools.plotting.autocorrelation_plot(ts)
+def plot_acf(time_series, max_lag, ticks, plot_title=''):
+    pd.tools.plotting.autocorrelation_plot(time_series)
     plt.title(plot_title)
     plt.gca().set_xlim([0, max_lag])
     plt.xticks(np.arange(0, max_lag+1, ticks))
     plt.show()
 
-def plot_daily_means(ts):
-    ext_ts = ts.copy()
+def plot_daily_means(time_series):
+    ext_ts = time_series.copy()
     ext_ts['weekday'] = ext_ts.index.weekday
     ext_ts.boxplot(column=['Internet traffic data (in GB)'], by='weekday')
 
@@ -90,10 +84,10 @@ def plot_daily_means(ts):
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%a'))
     plt.show()
 
-if __name__ == '__main__':
-    ts_5minutes = read_dataset('datasets/internet-traffic-data-5minutes.csv')
-    ts_hourly = read_dataset('datasets/internet-traffic-data-hourly.csv')
-    ts_daily = read_dataset('datasets/internet-traffic-data-daily.csv')
+def main():
+    ts_5minutes = read_dataset('../datasets/internet-traffic-data-5minutes.csv')
+    ts_hourly = read_dataset('../datasets/internet-traffic-data-hourly.csv')
+    ts_daily = read_dataset('../datasets/internet-traffic-data-daily.csv')
 
     plot_all_full_timeseries(ts_5minutes, ts_hourly, ts_daily)
 
@@ -106,4 +100,7 @@ if __name__ == '__main__':
 
     plot_daily_means(ts_5minutes)
     plot_acf(ts_hourly, 200, 24, 'ACF hourly data (one week)')
-    plot_acf(ts_5minutes, 300, 50, 'ACF 5 min. data (one day)')
+    plot_acf(ts_5minutes, 300, 50, 'ACF 5 min, data (one day)')
+
+if __name__ == '__main__':
+    main()
