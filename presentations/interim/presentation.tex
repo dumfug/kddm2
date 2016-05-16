@@ -33,8 +33,36 @@
   \end{frame}
  
  
-  \begin{frame}{Thomas Approach}
-   
+  \begin{frame}{Hold-Winters}
+  \textbf{single exponential smoothing}
+  \begin{itemize}
+   \item weighted moving average
+   \item \( \hat{y}_{t+1,t} = \alpha y_t + (1 - \alpha) \hat{y}_{t-1}\)
+  \end{itemize}
+  
+  \textbf{double exponential smoothing}
+  \begin{itemize}
+   \item Holt's linear trend method
+   \item ability to model trends in the dataset
+   \item two smoothing equations (level and trend)
+  \end{itemize}
+  \end{frame}
+  
+  \begin{frame}{Hold-Winters}
+  \textbf{triple exponential smoothing}
+  \begin{itemize}
+   \item Holt's exponential trend method
+   \item ability to model trends and seasonal effects
+   \item three smoothing equations
+   \item two season variant of the method
+  \end{itemize}
+  
+  
+  \textbf{expectations}
+  \begin{itemize}
+   \item time series is highly seasonal
+   \item dataset suits the method
+  \end{itemize}
   \end{frame}
 
   
