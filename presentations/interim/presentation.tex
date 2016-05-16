@@ -48,11 +48,10 @@
     
     \textbf{feed-forward network}
     \begin{itemize}
-     \item multilayer perceptron network
+     \item multilayer perceptron (MLP) network 
      \item most commonly used for forecasting
      \item sliding window over input series (i.e. set of lags)
      \item one hidden layer with \(n\) neurons
-     \item neural network ensemble
     \end{itemize}
   \end{frame}
 
@@ -60,18 +59,17 @@
   \begin{frame}{Neural Network Approaches}
     \textbf{recurrent network}
     \begin{itemize}
-     \item allows cycles	
+     \item allows cycles
      \item long short-term memory (LSTM) architecture
-     
+     \item influence of past values decays quickly → memory cells
+     \item well-suited for time series forecasting
     \end{itemize}
-
     
-    \textbf{problems}
+    \textbf{problems and expectations}
     \begin{itemize}
-     \item black magic
-     \item parameter selection
+     \item LSTM is not straightforward
+     \item LSTM should outperform MLP
     \end{itemize}
-
   \end{frame}
 
   
