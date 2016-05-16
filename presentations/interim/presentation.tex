@@ -1,5 +1,6 @@
 \documentclass{beamer}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 
 \usetheme{m}
@@ -14,8 +15,9 @@
   
   \begin{frame}{Recap}   
     \textbf{goal: forecast TCP/IP traffic}
-    
-    \vspace{15pt}
+    \begin{itemize}
+     \item real-time and short-time
+    \end{itemize}
     
     \textbf{data set}
     \begin{itemize}
@@ -36,13 +38,58 @@
   \end{frame}
 
   
-  \begin{frame}{Neural Network Approach}
-   
+  \begin{frame}{Neural Network Approaches}
+    \textbf{neural networks}
+    \begin{itemize}
+     \item non-linear learning
+     \item flexible, powerful
+     \item less well behaved
+    \end{itemize}
+    
+    \textbf{feed-forward network}
+    \begin{itemize}
+     \item multilayer perceptron network
+     \item most commonly used for forecasting
+     \item sliding window over input series (i.e. set of lags)
+     \item one hidden layer with \(n\) neurons
+     \item neural network ensemble
+    \end{itemize}
   \end{frame}
 
   
-  \begin{frame}{Evaluation Measures}
+  \begin{frame}{Neural Network Approaches}
+    \textbf{recurrent network}
+    \begin{itemize}
+     \item allows cycles	
+     \item long short-term memory (LSTM) architecture
+     
+    \end{itemize}
+
+    
+    \textbf{problems}
+    \begin{itemize}
+     \item black magic
+     \item parameter selection
+    \end{itemize}
+
+  \end{frame}
+
+  
+  \begin{frame}{Evaluation}
+    \textbf{accuracy measures}
+    \begin{itemize}
+     \item sum squared error (SSE)
+     \item symmetric mean absolute percentage error (sMAPE)
+     \item \ldots
+    \end{itemize}
    
+    \textbf{scaled errors}
+    \begin{itemize}
+     \item compare forecasts on series of different scales 
+     \item mean absolute scaled error (MASE)
+     \item compare forecast with naïve method 
+     \item seasonal version: \(\hat{y}_{t+h,t} = y_{t+h-K}\) %
+    \end{itemize}
   \end{frame}
 
   
