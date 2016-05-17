@@ -28,12 +28,12 @@
     \textbf{approaches}
     \begin{itemize}
      \item classical time series prediction methods
-     \item neural networks
+     \item artificial neural networks
     \end{itemize}
   \end{frame}
  
  
-  \begin{frame}{Hold-Winters}
+  \begin{frame}{Holt-Winters}
   \textbf{single exponential smoothing}
   \begin{itemize}
    \item weighted moving average
@@ -43,12 +43,12 @@
   \textbf{double exponential smoothing}
   \begin{itemize}
    \item Holt's linear trend method
-   \item ability to model trends in the dataset
+   \item ability to model trends in the data set
    \item two smoothing equations (level and trend)
   \end{itemize}
   \end{frame}
   
-  \begin{frame}{Hold-Winters}
+  \begin{frame}{Holt-Winters}
   \textbf{triple exponential smoothing}
   \begin{itemize}
    \item Holt's exponential trend method
@@ -57,11 +57,10 @@
    \item two season variant of the method
   \end{itemize}
   
-  
   \textbf{expectations}
   \begin{itemize}
    \item time series is highly seasonal
-   \item dataset suits the method
+   \item data set suits the method
   \end{itemize}
   \end{frame}
 
@@ -71,12 +70,12 @@
     \begin{itemize}
      \item non-linear learning
      \item flexible, powerful
-     \item less well behaved
+     \item less well-behaved
     \end{itemize}
     
     \textbf{feed-forward network}
     \begin{itemize}
-     \item multilayer perceptron (MLP) network 
+     \item multilayer perceptron (MLP) 
      \item most commonly used for forecasting
      \item sliding window over input series (i.e. set of lags)
      \item one hidden layer with \(n\) neurons
@@ -88,7 +87,7 @@
     \textbf{recurrent network}
     \begin{itemize}
      \item allows cycles
-     \item long short-term memory (LSTM) architecture
+     \item long short-term memory (LSTM)
      \item influence of past values decays quickly → memory cells
      \item well-suited for time series forecasting
     \end{itemize}
@@ -109,7 +108,7 @@
      \item \ldots
     \end{itemize}
    
-    \textbf{scaled errors}
+    \textbf{scale-free errors}
     \begin{itemize}
      \item compare forecasts on series of different scales 
      \item mean absolute scaled error (MASE)
@@ -120,5 +119,4 @@
 
   
   \plain{Questions?}
-  
 \end{document}
