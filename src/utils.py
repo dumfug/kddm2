@@ -60,7 +60,7 @@ def split_dataset(data, window, ratio=0.7):
     if not 0.0 <= ratio <= 1:
         raise ValueError("invalid value for split ratio.")
 
-    window.append(True) # include the target value in the sequences
+    ext_window = window + [True] # include the target value in the sequences
 
     # standardizing the data to get a zero mean and standard deviation of one
     mean = data['Internet traffic data (in GB)'].mean()
@@ -69,9 +69,9 @@ def split_dataset(data, window, ratio=0.7):
     data['Internet traffic data (in GB)'] /= std
 
     sequences = []
-    for index in range(len(data) - len(window) + 1):
-        sequence = data[index : index + len(window)]['Internet traffic data (in GB)'].tolist()
-        sequences.append(list(compress(sequence, window)))
+    for index in range(len(data) - len(ext_window) + 1):
+        sequence = data[index : index + len(ext_window)]['Internet traffic data (in GB)'].tolist()
+        sequences.append(list(compress(sequence, ext_window)))
     sequences = np.array(sequences)
 
     split_row = int(len(sequences) * ratio)
