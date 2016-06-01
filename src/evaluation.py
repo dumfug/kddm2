@@ -2,36 +2,42 @@
 # encoding: utf-8
 
 """
-Forcasting accuracy measures.
+Forecasting accuracy measures.
 """
 
 import numpy as np
 
 
-def mase(actual_values, forcasted_values, seasonal_period=1):
+def mase(training_set, test_set, prediction, seasonal_period=1):
     """
     Calculates the mean absolute scaled error (i.e. a measure for the accuracy
-    of univariate forecast predictions). See
-    https://en.wikipedia.org/wiki/Mean_absolute_scaled_error  for more details.
+    of univariate forecast predictions). See https://www.otexts.org/fpp/2/5
+    for more details.
 
     Args:
-        actual_values: The true values as list.
-        forcasted_values: The predicted values as list.
+        training_set: Data to train the model is here used calculate the
+        scaling factor for MASE as list.
+        test_set: The true values to compare to the prediction as list.
+        prediction: The forecasted values as list.
         seasonal_period: The seasonal period used in the naïve baseline
-        forcast method.
+        forecast method.
 
     Returns:
        The mean scaled error of the prediction.
     """
     if seasonal_period < 1:
-        raise ValueError('seasonal period must be greater than zero.')
+        raise ValueError('Seasonal period must be greater than zero.')
 
-    actual_values = np.array(actual_values)
-    forcasted_values = np.array(forcasted_values)
-    nperiods = len(actual_values)
+    if len(test_set) != len(prediction):
+        raise ValueError('Prediction an test set must have the same length.')
 
-    forcast_error = np.sum(np.abs(actual_values - forcasted_values))
-    mae_naive_forcast = nperiods / (nperiods - seasonal_period) * np.sum(np.abs(
-        actual_values[seasonal_period:] - actual_values[:-seasonal_period]))
+    training_set = np.array(training_set)
+    test_set = np.array(test_set)
+    prediction = np.array(prediction)
 
-    return forcast_error / mae_naive_forcast
+    mae_naive_forecast = np.sum(np.abs(training_set[seasonal_period:] -
+      training_set[:-seasonal_period])) / (len(training_set) - seasonal_period)
+
+    forecast_errors = np.abs(test_set - prediction) / mae_naive_forecast
+
+    return forecast_errors.mean()
