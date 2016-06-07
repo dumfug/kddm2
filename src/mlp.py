@@ -2,47 +2,20 @@
 # encoding: utf-8
 
 import time
-from matplotlib import pyplot as plt
-from keras.models import Sequential, model_from_json
+from keras.models import Sequential
 from keras.layers.core import Activation, Dense
 from keras.callbacks import EarlyStopping
 from utils import read_dataset, split_dataset
+from nn_common import load_model, store_model, plot_result, multi_step_prediction
 
 
-LOSS_FUNCTION = 'mean_squared_logarithmic_error'
-
-def store_model(model):
-    model_id = time.strftime('%A_%H%M%S')
-    with open('../models/model_{}.json'.format(model_id), 'x') as json_file:
-        json_file.write(model.to_json())
-    model.save_weights('../models/model_{}.h5'.format(model_id))
-
-def load_model(model_id):
-    with open('../models/model_{}.json'.format(model_id)) as json_file:
-        model = model_from_json(json_file.read())
-    model.load_weights('../models/model_{}.h5'.format(model_id))
-    model.compile(optimizer='sgd', loss=LOSS_FUNCTION)
-    return model
-
-def plot_result(forecast, actual, mean, std, export_path=None):
-    plt.ylabel('data [GB]')
-    plt.xlabel('sample')
-    plt.plot((std * actual + mean), 'g', label='actual')
-    plt.plot((std * forecast + mean), 'r--', label='forecast')
-    plt.legend()
-
-    if export_path is None:
-        plt.show()
-    else:
-        plt.savefig(export_path)
-
-def compile_model(hidden_neurons, input_dim, activation_function='sigmoid'):
+def compile_model(hidden_neurons, input_dim, loss_fn, activation_fn='sigmoid'):
     model = Sequential()
     model.add(Dense(hidden_neurons, input_dim=input_dim))
-    model.add(Activation(activation_function))
+    model.add(Activation(activation_fn))
     model.add(Dense(1))
     model.add(Activation('linear'))
-    model.compile(optimizer='sgd', loss=LOSS_FUNCTION)
+    model.compile(optimizer='sgd', loss=loss_fn)
     return model
 
 def run_network(show_plot=False):
@@ -57,7 +30,7 @@ def run_network(show_plot=False):
     print('number of test samples     ', len(y_test))
 
     print('initialize model...')
-    model = compile_model(hidden_neurons=25, input_dim=sum(1 for x in window if x))
+    model = compile_model(hidden_neurons=25, input_dim=sum(1 for x in window if x), loss_fn='mse')
 
     print('train model...')
     early_stopping = EarlyStopping(monitor='val_loss', patience=2)
@@ -67,7 +40,7 @@ def run_network(show_plot=False):
     prediction = model.predict(X_test).flatten()
 
     if show_plot:
-        plot_result(prediction, y_test, mean, std)
+        plot_result(prediction, y_test, 0, 1)
 
     print('\ntotoal duration: {:.2f} seconds'.format(time.time() - start_time))
     return model
@@ -97,7 +70,7 @@ def hyper_parameter_search(max_evals=100):
 
         X_train, y_train, *_ = split_dataset(data, window, ratio=0.75)
         model = compile_model(nneurons, input_dim=sum(1 for x in window if x),
-            activation_function=params['activation_function'])
+            loss_fn='mse', activation_fn=params['activation_function'])
         hist = model.fit(X_train, y_train, nb_epoch=50, validation_split=0.33,
             callbacks=[EarlyStopping(monitor='val_loss', patience=2)],
             verbose=0)
@@ -111,6 +84,7 @@ def hyper_parameter_search(max_evals=100):
     return fmin(objective, space=space, algo=tpe.suggest, max_evals=max_evals)
 
 if __name__ == '__main__':
-    print(hyper_parameter_search(1))
+    run_network(True)
+    # print(hyper_parameter_search())
     # best so far:   {'nneurons': 40, 'func': 2, 'season': 1, 'window': 1377}
     # {'func': 2, 'window': 403, 'season': 0, 'nneurons': 9}
