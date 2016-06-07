@@ -29,11 +29,11 @@ def read_dataset(path):
                          'Internet traffic data (in GB)'}, inplace=True)
     return data
 
-def split_dataset(data, window, ratio=0.7):
+def split_dataset(data, window, ratio=0.7, standardize=True):
     """
     Generates training and test data from the data set. Each sample consists of
     a sequence of data points and a target forecast value. The values in the
-    data set are standardized to get data with zero mean and a standard
+    data set can be standardized to get data with zero mean and a standard
     deviation of one.
 
     Args:
@@ -45,6 +45,8 @@ def split_dataset(data, window, ratio=0.7):
         last value should not influence the forecast.
         ratio: The ratio (i.e. a value between 0.0 and 1.0) of the data set
         which should be used for training.
+        standardize: True leads to a zero mean and standard deviation of one
+        data set.
 
     Returns:
         A 6-tuple consisting of:
@@ -54,19 +56,24 @@ def split_dataset(data, window, ratio=0.7):
         3) A numpy array of test sequences.
         4) A numpy array of the corresponding target values for the test
            sequences.
-        5) The mean of the original data.
-        6) The standard deviation of the original data.
+        5) The mean of the original data or 0 if standardize is False.
+        6) The standard deviation of the original data or 1 if standardize is
+           False.
     """
     if not 0.0 <= ratio <= 1:
         raise ValueError("invalid value for split ratio.")
 
     ext_window = window + [True] # include the target value in the sequences
 
-    # standardizing the data to get a zero mean and standard deviation of one
-    mean = data['Internet traffic data (in GB)'].mean()
-    std = data['Internet traffic data (in GB)'].std()
-    data['Internet traffic data (in GB)'] -= mean
-    data['Internet traffic data (in GB)'] /= std
+    if standardize:
+        # standardizing the data to get a zero mean and standard deviation of one
+        mean = data['Internet traffic data (in GB)'].mean()
+        std = data['Internet traffic data (in GB)'].std()
+        data['Internet traffic data (in GB)'] -= mean
+        data['Internet traffic data (in GB)'] /= std
+    else:
+        mean = 0
+        std = 1
 
     sequences = []
     for index in range(len(data) - len(ext_window) + 1):
