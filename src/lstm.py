@@ -28,7 +28,7 @@ def run_network(model=None, save_model=False):
     print('loading and prepare data set...')
     data = read_dataset('../datasets/internet-traffic-data-5minutes.csv')
     window = [1] * 50 # use the last 50 values for forecasting
-    X_train, y_train, X_test, y_test, mean, std = split_dataset(data, window, ratio=0.75)
+    X_train, y_train, X_test, y_test, mean, std = split_dataset(data, window, ratio=0.75, standardize=False)
 
     # reshape s.t. the data has the form (#examples, #values in sequences,
     # dim. of each value in the sequence)
@@ -37,7 +37,7 @@ def run_network(model=None, save_model=False):
 
     if model is None:
         print('initialize model...')
-        model = compile_model(nneurons=(50, 100), loss_fn='mse')
+        model = compile_model(nneurons=(50, 100), loss_fn='msle')
 
         print('train model...')
         early_stopping = EarlyStopping(monitor='val_loss', patience=2)
