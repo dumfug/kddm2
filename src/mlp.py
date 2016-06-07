@@ -9,7 +9,7 @@ from keras.callbacks import EarlyStopping
 from utils import read_dataset, split_dataset
 
 
-LOSS_FUNCTION = 'mae' #loss=mean_squared_logarithmic_error
+LOSS_FUNCTION = 'mean_squared_logarithmic_error'
 
 def store_model(model):
     model_id = time.strftime('%A_%H%M%S')
@@ -64,8 +64,7 @@ def run_network(show_plot=False):
     model.fit(X_train, y_train, nb_epoch=50, validation_split=0.33, callbacks=[early_stopping])
 
     print('make predictions...')
-    prediction = model.predict(X_test)
-    prediction = prediction.reshape(len(y_test))
+    prediction = model.predict(X_test).flatten()
 
     if show_plot:
         plot_result(prediction, y_test, mean, std)
@@ -73,7 +72,7 @@ def run_network(show_plot=False):
     print('\ntotoal duration: {:.2f} seconds'.format(time.time() - start_time))
     return model
 
-def hyper_parameter_search():
+def hyper_parameter_search(max_evals=100):
     from hyperopt import fmin, tpe, hp, STATUS_OK, STATUS_FAIL
 
     data = read_dataset('../datasets/internet-traffic-data-5minutes.csv')
@@ -104,10 +103,14 @@ def hyper_parameter_search():
             verbose=0)
 
         val_loss = hist.history['val_loss'][-1]
-        print('model val_loss=', val_loss)
+        print("{ 'val_loss':", val_loss, ", 'nneurons':", nneurons,
+            ", 'window':", params['window'], ", 'season':", params['season'],
+            ", 'func':", params['activation_function'],  "}")
         return {'loss': val_loss, 'status': STATUS_OK}
 
-    return fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=2)
+    return fmin(objective, space=space, algo=tpe.suggest, max_evals=max_evals)
 
 if __name__ == '__main__':
-    run_network(show_plot=True)
+    print(hyper_parameter_search(1))
+    # best so far:   {'nneurons': 40, 'func': 2, 'season': 1, 'window': 1377}
+    # {'func': 2, 'window': 403, 'season': 0, 'nneurons': 9}
