@@ -13,6 +13,7 @@ def store_model(model):
         json_file.write(model.to_json())
     model.save_weights('../models/model_{}.h5'.format(model_id))
 
+
 def load_model(model_id, loss_function):
     with open('../models/model_{}.json'.format(model_id)) as json_file:
         model = model_from_json(json_file.read())
@@ -20,9 +21,10 @@ def load_model(model_id, loss_function):
     model.compile(optimizer='sgd', loss=loss_function)
     return model
 
+
 def plot_result(forecast, actual, mean=0, std=1, export_path=None):
     plt.ylabel('data [GB]')
-    plt.xlabel('sample')
+    plt.xlabel('time')
     plt.plot((std * actual + mean), 'g', label='actual')
     plt.plot((std * forecast + mean), 'r--', label='forecast')
     plt.legend()
@@ -32,8 +34,8 @@ def plot_result(forecast, actual, mean=0, std=1, export_path=None):
     else:
         plt.savefig(export_path)
 
-def multi_step_prediction(model, observations, window, horizon):
 
+def multi_step_prediction(model, observations, window, horizon):
     if len(observations) < len(window):
         raise ValueError('number of observations is too small')
 

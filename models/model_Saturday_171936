@@ -1,0 +1,2 @@
+lstm
+window=[True]*14

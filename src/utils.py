@@ -14,7 +14,7 @@ from itertools import compress
 def read_dataset(path):
     """
     Imports a network traffic data set from the datasets directory. The values
-    for the transported data are converted from bits into GB.
+    for the transported data are converted from bits into bytes.
 
     Args:
         path: The path to the data set.
@@ -24,10 +24,11 @@ def read_dataset(path):
     """
 
     data = pd.read_csv(path, parse_dates='Time', index_col='Time')
-    data = data / 8 / 2**30 # convert bits into GB
-    data.rename(columns={'Internet traffic data (in bits)':
-                         'Internet traffic data (in GB)'}, inplace=True)
+    data = data / 8  # convert bits into bytes
+    data.rename(columns={'Internet traffic data (in bits)': 'data (in bytes)'},
+                inplace=True)
     return data
+
 
 def split_dataset(data, window, ratio=0.7, standardize=True):
     """
@@ -63,21 +64,21 @@ def split_dataset(data, window, ratio=0.7, standardize=True):
     if not 0.0 <= ratio <= 1:
         raise ValueError("invalid value for split ratio.")
 
-    ext_window = window + [True] # include the target value in the sequences
+    ext_window = window + [True]  # include the target value in the sequences
 
     if standardize:
-        # standardizing the data to get a zero mean and standard deviation of one
-        mean = data['Internet traffic data (in GB)'].mean()
-        std = data['Internet traffic data (in GB)'].std()
-        data['Internet traffic data (in GB)'] -= mean
-        data['Internet traffic data (in GB)'] /= std
+        # standardizing the data to get a 0 mean and standard deviation of 1
+        mean = data['data (in bytes)'].mean()
+        std = data['data (in bytes)'].std()
+        data['data (in bytes)'] -= mean
+        data['data (in bytes)'] /= std
     else:
         mean = 0
         std = 1
 
     sequences = []
-    for index in range(len(data) - len(ext_window) + 1):
-        sequence = data[index : index + len(ext_window)]['Internet traffic data (in GB)'].tolist()
+    for idx in range(len(data) - len(ext_window) + 1):
+        sequence = data[idx:idx+len(ext_window)]['data (in bytes)'].tolist()
         sequences.append(list(compress(sequence, ext_window)))
     sequences = np.array(sequences)
 
@@ -92,12 +93,26 @@ def split_dataset(data, window, ratio=0.7, standardize=True):
 
     return X_train, y_train, X_test, y_test, mean, std
 
-def _print_test_data():
-    data = read_dataset('../datasets/internet-traffic-data-5minutes.csv')
-    X_test, y_test, _, _, mean, std = split_dataset(data, [True] * 50)
-    print("test data: ", X_test)
-    print("target values: ", y_test)
-    print("mean and std of the original data set: ", mean, "and ", std)
 
-if __name__ == '__main__':
-    _print_test_data()
+def create_window_array(window, season_lag=None):
+    """
+    Create a sliding window array (i.e. a array of True and False values that
+    is used to determine what past values should be used to to forecast the
+    next value).
+
+    Args:
+        window: An integer that is converted into its binary representation
+        which corresponds to the sliding window. For example, a input of 9
+        would correspond to a window of [1, 0, 0, 1].
+        season_lag: If value is present three values surrounding the lag are
+        included into the sliding window. For example, a a window of 1 (i.e.
+        only the last value) and a season lag of 5 leads to a window
+        [1, 0, 0, 1, 1, 1].
+
+    Returns:
+       The sliding window array.
+    """
+    window = [int(digit) for digit in bin(window)[2:]]
+    if season_lag:
+        window += [0] * (season_lag - len(window) - 2) + [1, 1, 1]
+    return window

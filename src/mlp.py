@@ -5,8 +5,9 @@ import time
 from keras.models import Sequential
 from keras.layers.core import Activation, Dense
 from keras.callbacks import EarlyStopping
-from utils import read_dataset, split_dataset
-from nn_common import load_model, store_model, plot_result, multi_step_prediction
+from utils import read_dataset, split_dataset, create_window_array
+from nn_common import load_model, store_model, plot_result
+from evaluation import mase
 
 
 def compile_model(hidden_neurons, input_dim, loss_fn, activation_fn='sigmoid'):
@@ -18,32 +19,43 @@ def compile_model(hidden_neurons, input_dim, loss_fn, activation_fn='sigmoid'):
     model.compile(optimizer='sgd', loss=loss_fn)
     return model
 
-def run_network(show_plot=False):
+
+def run_network(window, model=None, save_model=False, show_plot=False):
     start_time = time.time()
 
     print('loading and prepare data set...')
     data = read_dataset('../datasets/internet-traffic-data-5minutes.csv')
-    window = [1] * 20 # use the last 20 values for forecasting
-    X_train, y_train, X_test, y_test, mean, std = split_dataset(data, window, ratio=0.75)
+    X_train, y_train, X_test, y_test, mean, std = split_dataset(
+        data, window, ratio=0.90, standardize=True)
 
     print('number of training samples ', len(y_train))
     print('number of test samples     ', len(y_test))
 
-    print('initialize model...')
-    model = compile_model(hidden_neurons=25, input_dim=sum(1 for x in window if x), loss_fn='mse')
+    if not model:
+        print('initialize model...')
+        model = compile_model(
+            hidden_neurons=25, loss_fn='mse',
+            input_dim=sum(1 for x in window if x), activation_fn='tanh')
 
-    print('train model...')
-    early_stopping = EarlyStopping(monitor='val_loss', patience=2)
-    model.fit(X_train, y_train, nb_epoch=50, validation_split=0.33, callbacks=[early_stopping])
+        print('model ', model.summary())
+
+        print('train model...')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=2)
+        model.fit(X_train, y_train, nb_epoch=500, validation_split=0.1,
+                  callbacks=[early_stopping])
 
     print('make predictions...')
     prediction = model.predict(X_test).flatten()
 
     if show_plot:
-        plot_result(prediction, y_test, 0, 1)
+        plot_result(prediction, y_test, mean, std)
+        print('mase = ', mase(y_train, y_test, prediction))
 
-    print('\ntotoal duration: {:.2f} seconds'.format(time.time() - start_time))
-    return model
+    if save_model:
+        store_model(model)
+
+    print('totoal duration: {:.2f} seconds'.format(time.time() - start_time))
+
 
 def hyper_parameter_search(max_evals=100):
     from hyperopt import fmin, tpe, hp, STATUS_OK, STATUS_FAIL
@@ -58,33 +70,31 @@ def hyper_parameter_search(max_evals=100):
 
     def objective(params):
         nneurons = params['nneurons']
-        window = [int(digit) for digit in bin(params['window'])[2:]]
 
         if params['season'] == 'full_day':
-            window += [0] * (289 - len(window) - 3) + [1, 1, 1]
+            window = create_window_array(params['window'], season_lag=288)
         if params['season'] == 'half_day':
-            window += [0] * (169 - len(window) - 3) + [1, 1, 1]
+            window = create_window_array(params['window'], season_lag=168)
+        else:
+            window = create_window_array(params['window'])
 
         if not any(window) or nneurons < 2:
             return {'status': STATUS_FAIL}
 
-        X_train, y_train, *_ = split_dataset(data, window, ratio=0.75)
-        model = compile_model(nneurons, input_dim=sum(1 for x in window if x),
-            loss_fn='mse', activation_fn=params['activation_function'])
-        hist = model.fit(X_train, y_train, nb_epoch=50, validation_split=0.33,
+        X_train, y_train, *_ = split_dataset(
+            data, window, ratio=0.90, standardize=True)
+        model = compile_model(
+            nneurons, input_dim=sum(1 for x in window if x), loss_fn='mse',
+            activation_fn=params['activation_function'])
+        hist = model.fit(
+            X_train, y_train, nb_epoch=50, validation_split=0.1,
             callbacks=[EarlyStopping(monitor='val_loss', patience=2)],
             verbose=0)
 
-        val_loss = hist.history['val_loss'][-1]
-        print("{ 'val_loss':", val_loss, ", 'nneurons':", nneurons,
-            ", 'window':", params['window'], ", 'season':", params['season'],
-            ", 'func':", params['activation_function'],  "}")
-        return {'loss': val_loss, 'status': STATUS_OK}
+        return {'loss': hist.history['val_loss'][-1], 'status': STATUS_OK}
 
     return fmin(objective, space=space, algo=tpe.suggest, max_evals=max_evals)
 
+
 if __name__ == '__main__':
-    run_network(True)
-    # print(hyper_parameter_search())
-    # best so far:   {'nneurons': 40, 'func': 2, 'season': 1, 'window': 1377}
-    # {'func': 2, 'window': 403, 'season': 0, 'nneurons': 9}
+    print(hyper_parameter_search(1000))
