@@ -35,15 +35,14 @@ def plot_result(forecast, actual, mean=0, std=1, export_path=None):
         plt.savefig(export_path)
 
 
-def multi_step_prediction(model, observations, window, horizon):
+def iterative_prediction(model, observations, x_shape, window, horizon):
     if len(observations) < len(window):
         raise ValueError('number of observations is too small')
 
-    predictions = np.array([])
+    prediction = None
     for _ in range(horizon):
         observations = observations[len(observations)-len(window):]
-        x = np.array(list(compress(observations, window))).reshape(1, len(window))
-        prediction = model.predict_on_batch(x)
-        predictions = np.append(predictions, prediction.flatten())
-        observations = np.append(observations, prediction.flatten())
-    return np.array(predictions)
+        x = np.array(list(compress(observations, window))).reshape(x_shape)
+        prediction = model.predict_on_batch(x).flatten()
+        observations = np.append(observations, prediction)
+    return prediction[0]

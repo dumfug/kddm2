@@ -9,5 +9,6 @@ Theano
 graphviz
 pyparsing
 networkx
+tqdm
 git+https://github.com/hyperopt/hyperopt.git
 -e git+https://github.com/nlhepler/pydot.git@adf18a858a63b321b7e4ffd964a24d73add1bf4f#egg=pydot
