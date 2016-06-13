@@ -2,6 +2,8 @@
 # encoding: utf-8
 
 from tqdm import trange
+import numpy as np
+import pandas as pd
 import matplotlib.pylab as plt
 from evaluation import mase
 from utils import read_dataset, create_window_array
@@ -71,13 +73,47 @@ def forecasting_error_experiment():
 
     plt.ylabel('Error')
     plt.xlabel('Steps')
-    plt.plot(naive_forecast_errors, label='naive')
+    plt.plot(naive_forecast_errors, label='naïve')
     plt.plot(mlp_forecast_errors, label='MLP')
-    plt.plot(lstm_forecast_errors, label='LSTM')
-    plt.plot(deep_lstm_forecast_errors, label='deep LSTM')
-    plt.legend()
+    plt.plot(lstm_forecast_errors, label='1 layer LSTM')
+    plt.plot(deep_lstm_forecast_errors, label='2 layer LSTM')
+    plt.legend(loc='upper left')
+    plt.show()
+
+
+def forecasting_different_horizons():
+    print('load data set...')
+    data_df = read_dataset('../datasets/internet-traffic-data-5minutes.csv')
+    mean = data_df.mean()
+    std = data_df.std()
+    data_df -= mean
+    data_df /= std
+    data = data_df['data (in bytes)']
+
+    start_forecast_idx = int(len(data) * 0.90)
+    test_set = data[start_forecast_idx:]
+
+    print('calculate forecasts using a MLP neural network...')
+    mlp_model = load_model('Saturday_192115', 'mse')
+    window = create_window_array(139, 288)
+    window_size = sum(1 for x in window if x)
+
+    plt.ylabel('data (normalized)')
+    plt.xlabel('time')
+    plt.plot(test_set, 'r-', label='test set')
+
+    for steps, style in [(1, 'g-'), (24, 'b--')]:
+        forecast = []
+        for t in range(start_forecast_idx, len(data) - steps):
+            forecast.append(iterative_prediction(
+                mlp_model, data[:t], (1, window_size), window, steps+1))
+        series = pd.Series([np.nan] * steps + forecast, index=test_set.index)
+        plt.plot(series, style, label='h={}'.format(steps))
+
+    plt.legend(loc='upper left')
     plt.show()
 
 
 if __name__ == '__main__':
     forecasting_error_experiment()
+    forecasting_different_horizons()
