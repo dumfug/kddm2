@@ -61,3 +61,10 @@ class TestEvaluation(unittest.TestCase):
 
         args = [self.training_set, [1, 2, 3, 4], [1, 2, 3]]
         self.assertRaises(ValueError, evaluation.mase, *args)
+
+    def test_naive_forecast(self):
+        ts = list(range(1, 6)) * 10
+        self.assertEqual(evaluation.naive_forecast(ts), 5)
+        for h in range(1, 6):
+            self.assertEqual(evaluation.naive_forecast(ts, horizon=h,
+                seasonal_period=5), h)

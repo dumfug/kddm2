@@ -1,3 +1,14 @@
 numpy==1.11.0
 matplotlib==1.5.1
 pandas==0.18.0
+scipy
+pyyaml
+h5py
+keras
+Theano
+graphviz
+pyparsing
+networkx
+tqdm
+git+https://github.com/hyperopt/hyperopt.git
+-e git+https://github.com/nlhepler/pydot.git@adf18a858a63b321b7e4ffd964a24d73add1bf4f#egg=pydot
