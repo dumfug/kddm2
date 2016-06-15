@@ -30,7 +30,109 @@
      \item artificial neural networks
     \end{itemize}
   \end{frame}
- 
+  
+  \begin{frame}{Holt-Winter Approach}
+    \textbf{data set preparation}
+    \begin{itemize}
+      \item split into training, and test set
+      \item important to start at the beginning of a period
+    \end{itemize}
+    
+    \textbf{optimize parameter}
+    \begin{itemize}
+     \item with grid search
+     \item from 0.01 to 1.0 with 0.05 steps
+    \end{itemize}
+    
+    \textbf{parameter}
+    \begin{itemize}
+      \item influence of the previous element
+      \item weigth for the level ($\alpha$)
+      \item weigth for the trend ($\beta$)
+      \item weigth for the seasonality ($\gamma$)
+    \end{itemize}
+  \end{frame}
+  
+    \begin{frame}{Results}
+    \begin{columns}[c]
+    \column{0.35\textwidth}
+      \textbf{linear:}
+      \begin{itemize}
+	\item $\alpha$: 0.1 
+	\item $\beta$: 0.2
+	\item mase: 1.17685709586
+      \end{itemize}
+      
+      \textbf{addaptive:}
+      \begin{itemize}
+	\item $\alpha$: 0.0 
+	\item $\beta$: 0.0
+	\item $\gamma$: 1.0
+	\item period: 7
+	\item mase: 0.316808789116
+      \end{itemize}
+    
+      \column{0.65\textwidth} 
+      \textbf{forecast daily traffic}
+      \begin{figure}
+	\includegraphics[width=1.1\textwidth]{images/daily.png}
+      \end{figure}
+    \end{columns}
+  \end{frame}
+
+  \begin{frame}{Results}
+    \begin{columns}[c]
+    \column{0.35\textwidth}
+      \textbf{linear:}
+      \begin{itemize}
+	\item $\alpha$: 0.15
+	\item $\beta$: 0.1
+	\item mase: 4.34134852342
+      \end{itemize}
+      
+      \textbf{addaptive:}
+      \begin{itemize}
+	\item $\alpha$: 0.7 
+	\item $\beta$: 0.0
+	\item $\gamma$: 1.0
+	\item period: 24
+	\item mase: 3.24448701448
+      \end{itemize}
+    
+      \column{0.65\textwidth} 
+      \textbf{forecast hourly traffic}
+      \begin{figure}
+	\includegraphics[width=1.1\textwidth]{images/hoursly.png}
+      \end{figure}
+    \end{columns}
+  \end{frame}
+  
+  \begin{frame}{Results}
+    \begin{columns}[c]
+    \column{0.35\textwidth}
+      \textbf{addaptive:}
+      \begin{itemize}
+	\item $\alpha$: 0.9 
+	\item $\beta$: 0.65
+	\item $\gamma$: 0.9
+	\item period: 288
+	\item mase: 20.8613689301
+      \end{itemize}
+    
+      \column{0.65\textwidth} 
+      \textbf{forecast 5 minute traffic}
+      \begin{figure}
+	\includegraphics[width=1.1\textwidth]{images/5min.png}
+      \end{figure}
+    \end{columns}
+  \end{frame}
+
+   \begin{frame}{Results}
+      \center \textbf{Error-development over the complete test set}
+      \begin{figure}
+	\includegraphics[width=0.9\textwidth]{images/error.png}
+      \end{figure}
+  \end{frame}
  
   \begin{frame}{Neural Network Approach}
     \textbf{data set preparation}
@@ -53,10 +155,9 @@
     \end{itemize}
   \end{frame}
   
-  
   \begin{frame}{Results}
     \begin{columns}[c]
-      \column{0.35\textwidth}  
+      \column{0.35\textwidth}
       \textbf{MLP}
       \begin{itemize}
 	\item \(N=25\)

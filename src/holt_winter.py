@@ -20,9 +20,9 @@ def read_model():
     data_daily = read_dataset('../datasets/internet-traffic-data-daily.csv')
 
     # TODO: ändern beim merge...
-    data_5m = data_5m['Internet traffic data (in GB)'].tolist()
-    data_daily = data_daily['Internet traffic data (in GB)'].tolist()
-    data_hoursly = data_hoursly['Internet traffic data (in GB)'].tolist()
+    data_5m = data_5m['data (in bytes)'].tolist()
+    data_daily = data_daily['data (in bytes)'].tolist()
+    data_hoursly = data_hoursly['data (in bytes)'].tolist()
 
     rest_5m = int(len(data_5m) * 0.80) % 288
     start_forecast_idx_5m = int(len(data_5m) * 0.90) - rest_5m
