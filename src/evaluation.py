@@ -8,6 +8,17 @@ Forecasting accuracy measures.
 import numpy as np
 
 
+def naive_forecast(past, t=-1, horizon=1, seasonal_period=1):
+    """
+    Simple forecast method which predicts the next value by taking the current
+    value (i.e. value at the end of the past array) using the default parameter.
+    By tuning the default parameter it is possible to use the seasonal version
+    of this algorithm which calculates: pred_t+h,t = y_t+h-K where pred is the
+    list of past values, t is the current time index, h is the prediction
+    horizon and K is the seasonal period.
+    """
+    return past[t - seasonal_period + horizon]
+
 def mase(training_set, test_set, prediction, seasonal_period=1):
     """
     Calculates the mean absolute scaled error (i.e. a measure for the accuracy
