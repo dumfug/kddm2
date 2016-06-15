@@ -175,7 +175,7 @@ def plot_errors(train_5m, test_5m, train_hoursly, test_hoursly, train_daily, tes
     add_error_for_errorplot_adaptive(train_5m, test_5m, 0.9, 0.65, 0.9, 288, '5 min, period: 288')
 
     plt.xlabel('time')
-    plt.ylabel('mse')
+    plt.ylabel('error')
     plt.legend(loc=2, scatterpoints=1)
     plt.savefig('error.png')
     plt.clf();
