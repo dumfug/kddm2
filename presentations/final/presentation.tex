@@ -31,7 +31,7 @@
     \end{itemize}
   \end{frame}
   
-  \begin{frame}{Holt-Winter Approach}
+  \begin{frame}{Holt-Winters Approach}
     \textbf{data set preparation}
     \begin{itemize}
       \item split into training, and test set
@@ -47,9 +47,9 @@
     \textbf{parameter}
     \begin{itemize}
       \item influence of the previous element
-      \item weigth for the level ($\alpha$)
-      \item weigth for the trend ($\beta$)
-      \item weigth for the seasonality ($\gamma$)
+      \item weight for the level ($\alpha$)
+      \item weight for the trend ($\beta$)
+      \item weight for the seasonality ($\gamma$)
     \end{itemize}
   \end{frame}
   
@@ -60,7 +60,7 @@
       \begin{itemize}
 	\item $\alpha$: 0.1 
 	\item $\beta$: 0.2
-	\item mase: 1.17685709586
+	\item mase: 1.1768
       \end{itemize}
       
       \textbf{addaptive:}
@@ -69,7 +69,7 @@
 	\item $\beta$: 0.0
 	\item $\gamma$: 1.0
 	\item period: 7
-	\item mase: 0.316808789116
+	\item mase: 0.3168
       \end{itemize}
     
       \column{0.65\textwidth} 
@@ -87,7 +87,7 @@
       \begin{itemize}
 	\item $\alpha$: 0.15
 	\item $\beta$: 0.1
-	\item mase: 4.34134852342
+	\item mase: 4.3413
       \end{itemize}
       
       \textbf{addaptive:}
@@ -96,7 +96,7 @@
 	\item $\beta$: 0.0
 	\item $\gamma$: 1.0
 	\item period: 24
-	\item mase: 3.24448701448
+	\item mase: 3.2444
       \end{itemize}
     
       \column{0.65\textwidth} 
@@ -116,7 +116,7 @@
 	\item $\beta$: 0.65
 	\item $\gamma$: 0.9
 	\item period: 288
-	\item mase: 20.8613689301
+	\item mase: 20.8613
       \end{itemize}
     
       \column{0.65\textwidth} 
@@ -242,9 +242,20 @@
      \item numerous different approaches
      \item problem solved?
     \end{itemize}
-
   \end{frame}
 
+  \begin{frame}{Comparison}
+   \textbf{two very different methods}
+   \begin{itemize}
+    \item neural networks: black box
+    \item Holt-Winters: time series engineering 
+   \end{itemize}
+   
+   \hspace{10pt}
+   
+   \textbf{→ hard to compare}
+  \end{frame}
 
+  
   \plain{Questions?}
 \end{document}
