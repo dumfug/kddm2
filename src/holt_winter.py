@@ -108,9 +108,9 @@ def plot_hoursly(train, test):
     error = mase(train, test, pred_adaptive24, seasonal_period=1)
     print("Adaptive Error (Period 24): ", error)
 
-    pred_adaptive168 = holts_additive(train, period2, mult_alpha, mult_beta, mult_gamma, len(test))
-    error = mase(train, test, pred_adaptive168, seasonal_period=1)
-    print("Adaptive Error (Period 168): ", error, "\n")
+    #pred_adaptive168 = holts_additive(train, period2, mult_alpha, mult_beta, mult_gamma, len(test))
+    #error = mase(train, test, pred_adaptive168, seasonal_period=1)
+    #print("Adaptive Error (Period 168): ", error, "\n")
 
     ax1 = plt.subplot()
     ax1.set_xlim([0, len(test)])
@@ -119,7 +119,7 @@ def plot_hoursly(train, test):
     plt.plot(test, label='series')
     plt.plot(pred_linear, label='linear')
     plt.plot(pred_adaptive24, label='adaptive (period: 24)')
-    plt.plot(pred_adaptive168, label='adaptive (period: 168)')
+    #plt.plot(pred_adaptive168, label='adaptive (period: 168)')
     plt.legend(loc=4, scatterpoints=1)
     plt.savefig('hoursly.png')
     plt.clf();
